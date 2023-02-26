@@ -6,4 +6,4 @@ This is a repository for the recreation of the "Nibbles", outlined on [this page
 
 __Starting the Game__
 
-The game may be run via `python Program.py` at the root location of this repository.
+The game may be run via executing `python Program.py` at the root location of this repository.
