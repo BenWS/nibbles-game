@@ -4,7 +4,8 @@ TODO: General
 
  - [ ] Working on method for initially placing the body segment directly after the head
  - [ ] The snake coordinates should be 'square' with the apple coordinates - determine way to better keep to requirement in light of potential future program modifications
- - [ ] Initial display rules and display
+ - [ ] Initial score counter display and associated rules
+ - [ ] Record keeping in database
 '''
 
 
