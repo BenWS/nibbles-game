@@ -1,3 +1,23 @@
+
+'''
+TODO: General
+
+ - [ ] Working on method for initially placing the body segment directly after the head
+ - [ ] The snake coordinates should be 'square' with the apple coordinates - determine way to better keep to requirement in light of potential future program modifications
+ - [ ] Initial display rules and display
+'''
+
+
+'''
+WIP: Outline
+
+ - [ ] Prevent direction change for snake if such would result in immediate collison with its own segment 
+ - [ ] Setting initial direction to negative value reverses input 
+ - [ ] Initially document methods and classes
+'''
+
+
+
 import pygame
 import sys 
 from pygame import Rect, Surface
@@ -407,21 +427,3 @@ while running:
 	# pygame.draw.rect(screen, (0, 0, 255), (250,250,250, 250))
 	pygame.display.flip()
 	clock.tick(30)
-
-'''
-TODO: General
-
- - [ ] Working on method for initially placing the body segment directly after the head
- - [ ] The snake coordinates should be 'square' with the apple coordinates - determine way to better keep to requirement in light of potential future program modifications
- - [ ] Initial display rules and display
-'''
-
-
-'''
-WIP: Outline
-
- - [ ] Prevent direction change for snake if such would result in immediate collison with its own segment 
- - [ ] Setting initial direction to negative value reverses input 
- - [ ] Initially document methods and classes
-'''
-
