@@ -117,7 +117,6 @@ class Snake(pygame.sprite.Sprite):
 			by 1 with function call. 
 			'''
 			sprites_list = self.group.sprites()
-			print(len(sprites_list))
 			group_max_index = len(sprites_list) # get the segment position by total list size, thereby getting the position of the last segment assigned (i.e. this segment)
 
 			if group_max_index == 0:
@@ -169,7 +168,6 @@ class Snake(pygame.sprite.Sprite):
 		def update(self):
 			# print('Method called')
 			self.rect.move_ip(self.velocity[0],self.velocity[1])
-			process_log.log("Head moved.")
 			# print(self.rect.left,self.rect.top,self.rect.width,self.rect.height)
 		
 		def get_velocity_prev(self):
@@ -222,11 +220,11 @@ class Snake(pygame.sprite.Sprite):
 				pass
 			if self._segment_ahead.velocity[1] > 0:
 				# heading downwards
-				self.rect = self._segment_ahead.rect.move(0,offset)
+				self.rect = self._segment_ahead.rect.move(0,-offset)
 				pass
 			if self._segment_ahead.velocity[1] < 0:
 				# heading upwards
-				self.rect = self._segment_ahead.rect.move(0,-offset)
+				self.rect = self._segment_ahead.rect.move(0,offset)
 
 
 			# self.segment_ahead = None
@@ -249,8 +247,6 @@ class Snake(pygame.sprite.Sprite):
 			'''
 			# pass
 			# print(self.segment_ahead)
-			print(self.velocity)
-			print(self.velocity_prev)
 			self.velocity_prev = self.velocity
 			self.velocity = self._segment_ahead.velocity_prev
 
@@ -275,11 +271,11 @@ class Snake(pygame.sprite.Sprite):
 		self.segments = Snake.Segments()
 		self.head = Snake.HeadSegment()
 		self.segments.add(self.head)
+
+		self.head_group = pygame.sprite.Group()
+		self.head_group.add(self.head)
+
 		# self.head.rect.move_ip(-self.head.width,0)
-		self.segments.add()	
-		self.segments.add()	
-		self.segments.add()	
-		self.segments.add()	
 		self.segments.add()	
 		self.segments.add()	
 		self.segments.add()	
@@ -287,6 +283,19 @@ class Snake(pygame.sprite.Sprite):
 		
 		# adding first body segment 
 	
+	def grow(self):
+		self.segments.add()
+		self.segments.add()
+	
+	@property
+	def segments_group(self):
+		return self.segments.group
+	
+	@property
+	def body_segments_group(self):
+		body_segments_group = self.segments.group.copy()
+		body_segments_group.remove(self.head)
+		return body_segments_group
 
 	def update(self):
 		'''
@@ -323,6 +332,18 @@ class Apple():
 		self.rect = self.surf.get_rect()
 		self.rect.left = 300
 		self.rect.top = 650
+
+	def relocate(self):
+		'''
+		TODO:
+		
+		- Apple should not be placed at 'edge' of screen - should have an upper and lower-bound as buffer
+		- Apple should not be placed directly ahead of snake head on relocation
+		'''
+		x_coord = SCREEN_DIMENSION * math.floor(random.random() * 100)
+		y_coord = SCREEN_DIMENSION * math.floor(random.random() * 100)
+		apple.rect.top = y_coord
+		apple.rect.left= x_coord
 
 # initialize the process log
 process_log = ProcessLog()
@@ -362,14 +383,24 @@ while running:
 	for entity in snake.segments:
 		screen.blit(entity.surf,entity.rect)
 
-	
-	sprite_collided = pygame.sprite.spritecollideany(apple,snake.segments.group)
+	sprite_collided = pygame.sprite.spritecollideany(apple,snake.head_group)
 	if sprite_collided is not None:
 		# process_log.log("Collision detected")
-		x_coord = SCREEN_DIMENSION * math.floor(random.random() * 100)
-		y_coord = SCREEN_DIMENSION * math.floor(random.random() * 100)
-		apple.rect.top = y_coord
-		apple.rect.left= x_coord
+		apple.relocate()
+		snake.grow()
+
+	if pygame.sprite.spritecollideany(snake.head,snake.body_segments_group):
+		running=False
+
+	def snake_exceeds_bounds():
+		return (snake.head.rect.right > SCREEN_WIDTH) \
+			or (snake.head.rect.top > SCREEN_HEIGHT) \
+			or (snake.head.rect.bottom < 0)\
+			or (snake.head.rect.left < 0)
+
+	if snake_exceeds_bounds():
+			running = False
+	
 
 	screen.blit(apple.surf, apple.rect)
 
@@ -381,16 +412,16 @@ while running:
 TODO: General
 
  - [ ] Working on method for initially placing the body segment directly after the head
- - [ ] The snake coordinates should be 'square' with the apple coordinates
+ - [ ] The snake coordinates should be 'square' with the apple coordinates - determine way to better keep to requirement in light of potential future program modifications
+ - [ ] Initial display rules and display
+'''
+
+
+'''
+WIP: Outline
+
+ - [ ] Prevent direction change for snake if such would result in immediate collison with its own segment 
  - [ ] Setting initial direction to negative value reverses input 
-'''
-
-
-'''
-WIP:
-
- - [ ] Snake grows upon collision with apple
- - [ ] Game ends after snake exceeding the boundary of the screen
- - [ ] Apple is randomly placed 
+ - [ ] Initially document methods and classes
 '''
 
