@@ -17,8 +17,6 @@ WIP: Outline
  - [ ] Initially document methods and classes
 '''
 
-
-
 import pygame
 import sys 
 from pygame import Rect, Surface
