@@ -1,22 +1,8 @@
-
 import pygame
 import sys 
 from pygame import Rect, Surface
 import math
 import random
-
-# Import pygame.locals for easier access to key coordinates
-# Updated to conform to flake8 and black standards
-from pygame.locals import (
-  RLEACCEL,
-  K_UP,
-  K_DOWN,
-  K_LEFT,
-  K_RIGHT,
-  K_ESCAPE,
-  KEYDOWN,
-  QUIT,
-)
 
 # initialize constants
 SCREEN_DIMENSION = 10
@@ -24,19 +10,6 @@ SCREEN_HEIGHT = 100 * SCREEN_DIMENSION
 SCREEN_WIDTH = 100 * SCREEN_DIMENSION
 BLACK = 0,0,0
 
-# initialize the game
-pygame.init()
-
-clock = pygame.time.Clock()
-clock.tick(1)
-
-class ProcessLog:
-  def __init__(self):
-    pass
-
-  def log(self, error_message, level=None):
-    if level == None:
-      print('INFO: ',error_message)
 
 # define the snake class
 class Snake(pygame.sprite.Sprite):
@@ -345,66 +318,3 @@ class Apple(pygame.sprite.Sprite):
     y_coord = SCREEN_DIMENSION * math.floor(random.random() * 100)
     apple.rect.top = y_coord
     apple.rect.left= x_coord
-
-# initialize the process log
-process_log = ProcessLog()
-
-# initialize the screen object
-screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
-screen.fill(BLACK)
-
-# initialize snake object
-snake = Snake()
-apple = Apple()
-for entity in snake.segments:
-  screen.blit(entity.surf,entity.rect)
-# screen.blit(snake.surf, snake.rect)
-# screen.blit(apple.surf, apple.rect)
-
-running = True
-# game loop
-while running:
-  screen.fill(BLACK)
-  for event in pygame.event.get():
-    # did the user hit a key?
-    if event.type == KEYDOWN:
-      # did the user hit the escape key? If so, stop the loop.
-      if event.key == K_ESCAPE:
-          running = False
-    # did the user click the window close button? If so, stop the loop.
-    elif event.type == pygame.QUIT:
-        running = False
-      
-  # get the set of keys pressed and check for user input
-  pressed_keys = pygame.key.get_pressed()
-  snake.update()
-  snake.change_direction(pressed_keys)
-
-  # redraw game entities onto screen
-  for entity in snake.segments:
-    screen.blit(entity.surf,entity.rect)
-
-  sprite_collided = pygame.sprite.spritecollideany(apple,snake.head_group)
-  if sprite_collided is not None:
-    # process_log.log("Collision detected")
-    apple.relocate()
-    snake.grow()
-
-  if pygame.sprite.spritecollideany(snake.head,snake.body_segments_group):
-    running=False
-
-  def snake_exceeds_bounds():
-    return (snake.head.rect.right > SCREEN_WIDTH) \
-      or (snake.head.rect.top > SCREEN_HEIGHT) \
-      or (snake.head.rect.bottom < 0)\
-      or (snake.head.rect.left < 0)
-
-  if snake_exceeds_bounds():
-      running = False
-  
-
-  screen.blit(apple.surf, apple.rect)
-
-  # pygame.draw.rect(screen, (0, 0, 255), (250,250,250, 250))
-  pygame.display.flip()
-  clock.tick(30)
