@@ -1,16 +1,39 @@
+'''
+The graphics package is responsible for constructing and managing movement of individual game entities.
+The user_interface (separate package) sets the event listener but the graphics package determines what 
+the game elements do upon an event.
+'''
+
 import pygame
 import sys 
-from pygame import Rect, Surface
 import math
 import random
 
+
+from logging import ProcessLog
+
+process_log = ProcessLog()
+
+# Import pygame.locals for easier access to key coordinates
+# Updated to conform to flake8 and black standards
+from pygame.locals import (
+  RLEACCEL,
+  K_UP,
+  K_DOWN,
+  K_LEFT,
+  K_RIGHT,
+  K_ESCAPE,
+  KEYDOWN,
+  QUIT,
+)
+
 # initialize constants
-SCREEN_DIMENSION = 10
-SCREEN_HEIGHT = 100 * SCREEN_DIMENSION
-SCREEN_WIDTH = 100 * SCREEN_DIMENSION
-BLACK = 0,0,0
-
-
+from globals import (
+  SCREEN_DIMENSION,
+	SCREEN_HEIGHT,
+	SCREEN_WIDTH ,
+	BLACK 
+)
 # define the snake class
 class Snake(pygame.sprite.Sprite):
 
@@ -316,5 +339,5 @@ class Apple(pygame.sprite.Sprite):
     '''
     x_coord = SCREEN_DIMENSION * math.floor(random.random() * 100)
     y_coord = SCREEN_DIMENSION * math.floor(random.random() * 100)
-    apple.rect.top = y_coord
-    apple.rect.left= x_coord
+    self.rect.top = y_coord
+    self.rect.left= x_coord
