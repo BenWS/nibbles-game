@@ -66,6 +66,11 @@ class Element:
         
 class Container:
   '''
+  
+  '''
+
+
+  '''
   TODO: 11-11-2023
 
    - The container class should be able to position its child elements in either a vertical or horizontal layout
@@ -74,41 +79,84 @@ class Container:
    - If positioning is specified in terms of percentages, exceeding 100% should not throw an error, but render such as 1.5x bigger than the parent if the total percentage is 150% (as an example)
    - If the parent container moves, the children should move in reference to the parent
   '''
-  def __init__(self,surface):
+  def __init__(self,parent_surface, min_height=0,min_width=0):
     super(Container,self).__init__()
     # self.parent = None
-    self.surface = surface
+    self.parent_surface = parent_surface
     self.children = [] 
+    self.min_height = min_height
+    self.min_width = min_width
 
-  def add_child(self,surface):
+  def _get_child_height(self, child):
+     if isinstance(child, Container):
+        return self.min_height
+     elif isinstance(child,pygame.Surface):
+        return child.get_rect().height
+     
+  def _get_child_width(self, child):
+     if isinstance(child, Container):
+        return self.min_width
+     elif isinstance(child,pygame.Surface):
+        return child.get_rect().width
+  
+  def _get_child_centery(self,child):
+     if isinstance(child, Container):
+        return self.get_height()//2
+     elif isinstance(child,pygame.Surface):
+        return child.get_rect().centery
+     
+  def _get_child_centerx(self,child):
+     if isinstance(child, Container):
+        return self.get_width()//2
+     elif isinstance(child,pygame.Surface):
+        return child.get_rect().centerx
+
+  # def _blit_parent_surface(sle)
+  
+  def add_child(self,child):
     # surface.parent = self
-    self.children.append(surface)
+    self.children.append(child)
+    
+  def get_width(self):
+      '''
+      Get the total width of this container
+
+      If layout is vertical, then knowing the total width can be inferred
+      based on the maximum width rectangle
+      '''
+      if len(self.children) > 0:
+        max_width = 0
+        for child in self.children:
+          if self._get_child_width(child) > max_width:
+            max_width = self._get_child_width(child)
+        return max_width
+      elif len(self.children) == 0:
+         return self.min_width
+     
+  
+  def get_height(self):
+    '''
+    Get the total height of this container
+    '''
+    if len(self.children) > 0:
+      total_height = 0
+      for child in self.children:
+        total_height += self._get_child_height(child)
+      return total_height
+    elif len(self.children) == 0:
+         return self.min_height
+  
+  def get_rect(self):
+     '''
+     Get the PyGame rect object for this Container instance
+     '''
+     return pygame.Rect(0,0,self.min_width,self.min_height)
 
   def set_position(self,mode):
     '''
     This method sets the position of all the children elements of this container object. 
     The 'union' of the child surfaces is what effectively gets positioned.
-    '''
-    
-    # get vertical center
-    def get_total_height():
-      total_height = 0
-      for child in self.children:
-        total_height += child.get_rect().height
-      return total_height
-
-    def get_total_width():
-      '''
-      If layout is vertical, then knowing the total width can be inferred
-      based on the maximum width rectangle
-      '''
-      max_width = 0
-      for child in self.children:
-        if child.get_rect().width > max_width:
-          max_width = child.get_rect().width
-      
-      return max_width
-      
+    '''      
 
     def get_vertical_offset(child_index):
       '''
@@ -118,10 +166,10 @@ class Container:
       upper_index_limit = child_index
       for index,child in enumerate(self.children):
           if index < upper_index_limit:
-              vertical_offset += child.get_rect().height
+              vertical_offset += self._get_child_height(child)
           
           if index == upper_index_limit:
-              vertical_offset += child.get_rect().centery
+              vertical_offset += self._get_child_centery(child)
               return vertical_offset
             
           if index > upper_index_limit:
@@ -132,27 +180,27 @@ class Container:
         Get horizontal offset from center for given child element
         '''
         child = self.children[child_index]
-        return get_total_width()//2 - child.get_rect().centerx
+        return self.get_width()//2 - self._get_child_centerx(child)
         # return get_total_width()*1.0/2
           
     def get_center_movement():
       # get the movement required for center
-      screen_center_y = self.surface.get_rect().centery
-      screen_center_x = self.surface.get_rect().centerx
-      center_movement_x = screen_center_x - get_total_width()//2
-      center_movement_y = screen_center_y - get_total_height()//2
+      screen_center_y = self.parent_surface.get_rect().centery
+      screen_center_x = self.parent_surface.get_rect().centerx
+      center_movement_x = screen_center_x - self.get_width()//2
+      center_movement_y = screen_center_y - self.get_height()//2
       return (center_movement_x,center_movement_y)
 
 
     # set the position of the elements
     for index, child in enumerate(self.children):
-    # get the position of each element and compare against center
-        vertical_offset = get_vertical_offset(index)
-        horizontal_offset = get_horizontal_offset(index)
-        center_movement_x,center_movement_y = get_center_movement()
-        child_rect = child.get_rect()
-        child_rect.move_ip(horizontal_offset + center_movement_x, vertical_offset + center_movement_y)
-        self.surface.blit(child,child_rect)
+      # get the position of each element and compare against center
+      vertical_offset = get_vertical_offset(index)
+      horizontal_offset = get_horizontal_offset(index)
+      center_movement_x,center_movement_y = get_center_movement()
+      child_rect = child.get_rect()
+      child_rect.move_ip(horizontal_offset + center_movement_x, vertical_offset + center_movement_y)
+      self.parent_surface.blit(child,child_rect)
 
 
     # child_union_rect = pygame.Rect.unionall(self.children)
@@ -199,16 +247,32 @@ screen.fill((0, 0, 0))
 # screen.blit(text_subsurface_2,(300,300))
 
 # greeting_screen = GreetingScreen(screen)
-screen_container = Container(screen)
+'''
+Initialize and build the Container object and its child surfaces
+'''
+text_container = Container(screen)
+blank_container = Container(screen,min_height=100, min_width=100)
+
 greeting_font = font.Font(None, 30)
 greeting_text = greeting_font.render('Oh hi! Taylor Swift', True, (255,0,0))
 greeting_text_2 = greeting_font.render('Oh no! Bye Taylor Swift', True, (255,0,0))
 
-screen_container.add_child(greeting_text)
-screen_container.add_child(greeting_text)
+text_container.add_child(greeting_text)
+text_container.add_child(greeting_text)
+'''
+TODO: 2023_11_16_1
+
+Working on allowing for Container object types to 'blit' to the parent surface...
+'''
+# text_container.add_child(blank_container)
+text_container.add_child(greeting_text_2)
+text_container.add_child(greeting_text_2)
+text_container.add_child(greeting_text_2)
+text_container.add_child(greeting_text_2)
+text_container.add_child(greeting_text_2)
+
 # screen_container.add_child(greeting_text)
-# screen_container.add_child(greeting_text)
-screen_container.set_position('right_middle')
+text_container.set_position('right_middle')
 # greeting_screen.blit()
 
 
