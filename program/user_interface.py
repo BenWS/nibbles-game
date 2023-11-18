@@ -15,6 +15,7 @@ import time
 # local imports
 from logging import ProcessLog
 from graphics import Snake, Apple
+from layout import Container
 
 
 # Import pygame.locals for easier access to key coordinates
@@ -37,6 +38,7 @@ from globals import (
   BLACK,
   WHITE,
 )
+
 
 # initialize the game
 pygame.init()
@@ -71,10 +73,15 @@ class GameScene(Scene):
     self.screen = screen
 
     # clear screen
-    self.screen.fill(BLACK)
+    # self.screen.fill(BLACK)
     pygame.display.flip()
     
   def run(self):
+    # create Container object for layout
+    game_container = Container(self.screen,margin=(30,30,30,30),fill_color=BLACK)
+    game_container.render()
+    
+
     # initialize the process log
     process_log = ProcessLog()
 
@@ -82,14 +89,14 @@ class GameScene(Scene):
     snake = Snake()
     apple = Apple()
     for entity in snake.segments:
-      self.screen.blit(entity.surf,entity.rect)
+      game_container.surface.blit(entity.surf,entity.rect)
     # screen.blit(snake.surf, snake.rect)
     # screen.blit(apple.surf, apple.rect)
 
     running = True
     # game loop
     while running:
-      self.screen.fill(BLACK)
+      game_container.surface.fill(BLACK)
       for event in pygame.event.get():
         # did the user hit a key?
         if event.type == KEYDOWN:
@@ -107,7 +114,7 @@ class GameScene(Scene):
 
       # redraw game entities onto screen
       for entity in snake.segments:
-        self.screen.blit(entity.surf,entity.rect)
+        game_container.surface.blit(entity.surf,entity.rect)
 
       sprite_collided = pygame.sprite.spritecollideany(apple,snake.head_group)
       if sprite_collided is not None:
@@ -128,7 +135,7 @@ class GameScene(Scene):
           running = False
       
 
-      self.screen.blit(apple.surf, apple.rect)
+      game_container.surface.blit(apple.surf, apple.rect)
 
       # pygame.draw.rect(screen, (0, 0, 255), (250,250,250, 250))
       pygame.display.flip()
