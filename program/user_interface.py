@@ -7,6 +7,8 @@ overall rules of interaction between the user and the program elements (i.e. the
 # pygame imports
 import pygame
 from pygame import Rect, Surface
+from pygame import font
+font.init()
 
 # python standard library
 from abc import abstractmethod
@@ -59,7 +61,7 @@ class Scene:
       }
 
       @abstractmethod
-      def run():
+      def run():        
         '''
         Initilize and manage the event listeners, graphics elements,
         and elements to a particular 'scene'. 
@@ -73,12 +75,12 @@ class GameScene(Scene):
     self.screen = screen
 
     # clear screen
-    # self.screen.fill(BLACK)
+    self.screen.fill(BLACK)
     pygame.display.flip()
     
   def run(self):
     # create Container object for layout
-    game_container = Container(self.screen,margin=(50,50,50,50),fill_color=BLACK)
+    game_container = Container(self.screen,margin=(40,40,40,40),fill_color=BLACK)
     game_surface,game_rect = game_container.render()
     
 
@@ -89,7 +91,7 @@ class GameScene(Scene):
     snake = Snake()
     apple = Apple()
     for entity in snake.segments:
-      game_surface.blit(entity.surf,entity.rect)
+      self.screen.blit(entity.surf,entity.rect)
       self.screen.blit(game_surface,game_rect)
     # screen.blit(snake.surf, snake.rect)
     # screen.blit(apple.surf, apple.rect)
@@ -97,7 +99,9 @@ class GameScene(Scene):
     running = True
     # game loop
     while running:
+      # self.screen.fill(BLACK)
       game_surface,game_rect = game_container.render()
+      self.screen.blit(game_surface,game_rect)
       for event in pygame.event.get():
         # did the user hit a key?
         if event.type == KEYDOWN:
@@ -114,9 +118,9 @@ class GameScene(Scene):
       snake.change_direction(pressed_keys)
 
       # redraw game entities onto screen
+      entity = None
       for entity in snake.segments:
-        game_surface.blit(entity.surf,entity.rect)
-        self.screen.blit(game_surface,game_rect)
+        self.screen.blit(entity.surf,entity.rect)
 
       sprite_collided = pygame.sprite.spritecollideany(apple,snake.head_group)
       if sprite_collided is not None:
@@ -128,22 +132,131 @@ class GameScene(Scene):
         running=False
 
       def snake_exceeds_bounds(game_rect):
-        return (snake.head.rect.right > game_rect.right) \
-          or (snake.head.rect.top < game_rect.top) \
-          or (snake.head.rect.bottom > game_rect.bottom)\
-          or (snake.head.rect.left < game_rect.left)
+        return (snake.head.rect.right >= game_rect.right) \
+          or (snake.head.rect.top <= game_rect.top ) \
+          or (snake.head.rect.bottom >= game_rect.bottom)\
+          or (snake.head.rect.left <= game_rect.left)
 
       if snake_exceeds_bounds(game_rect):
-          running = False
-      
+          running = False      
 
-      game_surface.blit(apple.surf, apple.rect)
-      self.screen.blit(game_surface,game_rect)
+      self.screen.blit(apple.surf, apple.rect)
+      # self.screen.blit(game_surface,game_rect)
 
       # pygame.draw.rect(screen, (0, 0, 255), (250,250,250, 250))
       pygame.display.flip()
       clock.tick(30)
     return self.status_codes['DEFAULT']
+
+
+class TitleScene(Scene):
+   def __init__(self,screen):
+      super(TitleScene,self).__init__()
+      self.screen = screen
+      self.screen.fill(BLACK)
+      
+   
+   def run(self):
+      running = True
+      title_container = Container(self.screen,margin=(0,0,0,0))
+      title_font = font.Font(None,100)
+      subtitle_font = font.Font(None,50)
+      title_text = title_font.render('Nibbles',True,(255,0,0))
+      subtitle_text = subtitle_font.render('Press Any Key to Continue',True,(255,0,0))
+      title_container.add_child(title_text)
+      title_container.add_child(subtitle_text)
+      title_surface,title_rect = title_container.render()
+      pygame.display.flip()
+      self.screen.blit(title_surface,title_rect)
+      while running:
+        for event in pygame.event.get():
+          if event.type == pygame.QUIT:
+                running = False
+                
+        pygame.display.flip()
+      
+      return self.status_codes['DEFAULT']
+   
+class Countdown(Scene):
+   def __init__(self,screen):
+      super(Countdown,self).__init__()
+      self.screen = screen
+      self.screen.fill(BLACK)
+      self.font = font.Font(None,100)
+      self.font_color = (255,0,0)
+  
+   def update_text(self, container, id, value):
+      text_element = container.get_child(id)
+      text_element.content = self.font.render(value,True,self.font_color)
+   
+   def render_and_flip_content(self, container):
+      container_surface, container_rect = container.render()
+      self.screen.blit(container_surface, container_rect)
+      pygame.display.flip()
+
+   def flip_text(self,container,id,value):
+      self.update_text(container,id,value)
+      self.render_and_flip_content(container)
+   
+   def run(self):
+      title_container = Container(self.screen,margin=(0,0,0,0))
+      title_text = self.font.render('',True,(255,0,0))
+      title_container.add_child(title_text, id='countdown')
+  
+      self. flip_text(title_container,'countdown','Starting in 3...')
+      time.sleep(1)
+      self. flip_text(title_container,'countdown','Starting in 2...')
+      time.sleep(1)
+      self. flip_text(title_container,'countdown','Starting in 1...')
+      time.sleep(1)
+                
+      pygame.display.flip()
+      
+      return self.status_codes['DEFAULT']
+   
+
+class GameOver(Scene):
+   def __init__(self,screen):
+      super(GameOver,self).__init__()
+      self.screen = screen
+      self.screen.fill(BLACK)
+      self.font = font.Font(None,100)
+      self.subtitle_font = font.Font(None,50)
+      self.font_color = (255,0,0)
+  
+   def update_text(self, container, id, value, font=None):
+      text_element = container.get_child(id)
+      text_element.content = font.render(value,True,self.font_color)
+   
+   def render_and_flip_content(self, container):
+      container_surface, container_rect = container.render()
+      self.screen.blit(container_surface, container_rect)
+      pygame.display.flip()
+
+   def flip_text(self,container,id,value):
+      self.update_text(container,id,value)
+      self.render_and_flip_content(container)
+   
+   def run(self):
+      running = True
+      while running:
+        title_container = Container(self.screen,margin=(0,0,0,0))
+        title_text = self.font.render('',True,(255,0,0))
+        subtitle_text = self.subtitle_font.render('',True,(255,0,0))
+        title_container.add_child(title_text, id='title')
+        title_container.add_child(subtitle_text, id='subtitle')
+    
+        self.update_text(title_container,'title','Game Over',self.font)
+        self.update_text(title_container,'subtitle','Press Any Key to Exit',self.subtitle_font)
+        title_surface, title_rect = title_container.render()
+        self.screen.blit(title_surface, title_rect)
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+          if event.type == pygame.QUIT:
+                running = False
+
+      return self.status_codes['DEFAULT']
 
 class TestScene(Scene):
   def __init__(self,screen):
