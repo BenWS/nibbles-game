@@ -61,7 +61,8 @@ class Container:
 
   def __init__(self,parent, min_height=0,min_width=0, 
                positioning='GROUPED', margin=(0,0,0,0)
-               ,fill_color=BLACK):
+               , offset = (0,0,0,0), offset_anchor = 'top_left'
+               ,fill_color=BLACK, border_enabled=False):
     super(Container,self).__init__()
     # self.parent = None
     self.children = [] 
@@ -70,13 +71,20 @@ class Container:
     self.min_width = min_width
     self.positioning = positioning
     self.parent = parent
+    self.border_enabled=border_enabled
     self.element = Container.Element(self)
+    self.margin = margin
+    self.offset = offset
 
     # set margin
     self.margin_top = margin[0]
     self.margin_left = margin[1]
     self.margin_bottom = margin[2]
     self.margin_right = margin[3]
+
+    # set offset
+    self.offset_top = offset[0]
+    self.offset_left = offset[1]
     
     # set parent surface
     if isinstance(self.parent,pygame.Surface):
@@ -92,7 +100,10 @@ class Container:
         and min_width == 0: # if margin is not set assume 'flex' mode (see note above)
        sub_surface_height = self.parent_surface.get_height()
        sub_surface_width = self.parent_surface.get_width()
-    elif not margin==(0,0,0,0):  
+    elif offset != (0,0,0,0):
+       sub_surface_height = self.min_height
+       sub_surface_width = self.min_width
+    elif margin != (0,0,0,0):  
         sub_surface_width = self.parent_surface.get_width() - (self.margin_right + self.margin_left)
         sub_surface_height = self.parent_surface.get_height() - (self.margin_top + self.margin_bottom)
     
@@ -158,18 +169,11 @@ class Container:
     return grouped_children
   
   @property
-  def _absolute_positioning_children(self):
-    absolute_children = []
-    for child in self.children:
-      if isinstance(child.content,Container):
-          absolute_children.append(child.content)
-    return absolute_children
-  
-  @property
   def _absolute_positioning_elements(self):
     absolute_children = []
     for child in self.children:
-      if isinstance(child.content,Container):
+      if isinstance(child.content,Container)\
+        and child.content.positioning == 'ABSOLUTE':
           absolute_children.append(child)
     return absolute_children
   
@@ -225,7 +229,7 @@ class Container:
         
 
   def _render_absolute(self):
-     for child in self._absolute_positioning_children:
+     for child in self._absolute_positioning_elements:
         pass
      
   '''
@@ -295,8 +299,15 @@ class Container:
     self._render_absolute()
 
     # additional rendering for this element before handing off to display
-    pygame.draw.rect(self.surface, (255,0,0), self.rect, width=4)
+    
+    if self.border_enabled:
+      pygame.draw.rect(self.surface, (255,0,0), self.rect, width=4)
 
-    return self.surface, pygame.Rect(self.margin_left,self.margin_top,self.surface.get_width(),self.surface.get_height())
+    if self.margin != (0,0,0,0):
+      return self.surface, pygame.Rect(self.margin_left,self.margin_top,self.surface.get_width(),self.surface.get_height())
+    elif self.offset != (0,0,0,0):
+       return self.surface, pygame.Rect(self.offset_left,self.offset_top,self.surface.get_width(),self.surface.get_height())
+    else:
+       return self.surface, pygame.Rect(0,0,self.surface.get_width(),self.surface.get_height())
     # return self.surface, pygame.Rect(0,0,0,0)
     # return self.surface, (self.margin_left,self.margin_top)
