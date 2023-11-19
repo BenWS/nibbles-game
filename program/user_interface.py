@@ -78,8 +78,8 @@ class GameScene(Scene):
     
   def run(self):
     # create Container object for layout
-    game_container = Container(self.screen,margin=(30,30,30,30),fill_color=BLACK)
-    game_container.render()
+    game_container = Container(self.screen,margin=(50,50,50,50),fill_color=BLACK)
+    game_surface,game_rect = game_container.render()
     
 
     # initialize the process log
@@ -89,14 +89,15 @@ class GameScene(Scene):
     snake = Snake()
     apple = Apple()
     for entity in snake.segments:
-      game_container.surface.blit(entity.surf,entity.rect)
+      game_surface.blit(entity.surf,entity.rect)
+      self.screen.blit(game_surface,game_rect)
     # screen.blit(snake.surf, snake.rect)
     # screen.blit(apple.surf, apple.rect)
 
     running = True
     # game loop
     while running:
-      game_container.surface.fill(BLACK)
+      game_surface,game_rect = game_container.render()
       for event in pygame.event.get():
         # did the user hit a key?
         if event.type == KEYDOWN:
@@ -114,7 +115,8 @@ class GameScene(Scene):
 
       # redraw game entities onto screen
       for entity in snake.segments:
-        game_container.surface.blit(entity.surf,entity.rect)
+        game_surface.blit(entity.surf,entity.rect)
+        self.screen.blit(game_surface,game_rect)
 
       sprite_collided = pygame.sprite.spritecollideany(apple,snake.head_group)
       if sprite_collided is not None:
@@ -125,17 +127,18 @@ class GameScene(Scene):
       if pygame.sprite.spritecollideany(snake.head,snake.body_segments_group):
         running=False
 
-      def snake_exceeds_bounds():
-        return (snake.head.rect.right > SCREEN_WIDTH) \
-          or (snake.head.rect.top > SCREEN_HEIGHT) \
-          or (snake.head.rect.bottom < 0)\
-          or (snake.head.rect.left < 0)
+      def snake_exceeds_bounds(game_rect):
+        return (snake.head.rect.right > game_rect.right) \
+          or (snake.head.rect.top < game_rect.top) \
+          or (snake.head.rect.bottom > game_rect.bottom)\
+          or (snake.head.rect.left < game_rect.left)
 
-      if snake_exceeds_bounds():
+      if snake_exceeds_bounds(game_rect):
           running = False
       
 
-      game_container.surface.blit(apple.surf, apple.rect)
+      game_surface.blit(apple.surf, apple.rect)
+      self.screen.blit(game_surface,game_rect)
 
       # pygame.draw.rect(screen, (0, 0, 255), (250,250,250, 250))
       pygame.display.flip()

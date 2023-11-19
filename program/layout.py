@@ -283,10 +283,10 @@ class Container:
     '''
     TODO: Create additional rendering logic for ABSOLUTE positioning of elements
     '''      
+    self.surface.fill(self.fill_color)
     self._render_grouped()
     self._render_absolute()
 
-    self.surface.fill(self.fill_color)
     pygame.draw.rect(self.surface, (255,0,0), self.rect, width=4)
-    self.parent_surface.blit(self.surface,(self.margin_left,self.margin_top))
-
+    return self.surface, pygame.Rect(self.margin_left,self.margin_top, self.surface.get_width(), self.surface.get_height())
+    # return self.surface, (self.margin_left,self.margin_top)
