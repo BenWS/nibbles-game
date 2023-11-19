@@ -18,7 +18,7 @@ import time
 from logging import ProcessLog
 from graphics import Snake, Apple
 from layout import Container
-
+from database import database
 
 # Import pygame.locals for easier access to key coordinates
 # Updated to conform to flake8 and black standards
@@ -73,15 +73,22 @@ class GameScene(Scene):
   def __init__(self,screen):
     super(GameScene, self).__init__()
     self.screen = screen
+    self.counter_font = font.Font(None, 60)
+    self.score_counter = 0
 
     # clear screen
     self.screen.fill(BLACK)
     pygame.display.flip()
     
+
+
   def run(self):
     # create Container object for layout
-    game_container = Container(self.screen,margin=(40,40,40,40),fill_color=BLACK)
+    game_container = Container(self.screen,margin=(80,80,80,80),fill_color=BLACK,border_enabled=True)
+    score_container = Container(self.screen,offset=(10,20),min_width=300,min_height=100, fill_color=BLACK,border_enabled=True)
+    score_surface ,score_rect = score_container.render()
     game_surface,game_rect = game_container.render()
+
     
 
     # initialize the process log
@@ -92,6 +99,7 @@ class GameScene(Scene):
     apple = Apple()
     for entity in snake.segments:
       self.screen.blit(entity.surf,entity.rect)
+      self.screen.blit(score_surface ,score_rect)
       self.screen.blit(game_surface,game_rect)
     # screen.blit(snake.surf, snake.rect)
     # screen.blit(apple.surf, apple.rect)
@@ -101,6 +109,10 @@ class GameScene(Scene):
     while running:
       # self.screen.fill(BLACK)
       game_surface,game_rect = game_container.render()
+      score_surface.fill(BLACK)
+      counter_text = self.counter_font.render(str(self.score_counter) + ' Apple(s)',True,(255,0,0))
+      score_surface.blit(counter_text,counter_text.get_rect())
+      self.screen.blit(score_surface ,score_rect)
       self.screen.blit(game_surface,game_rect)
       for event in pygame.event.get():
         # did the user hit a key?
@@ -125,8 +137,9 @@ class GameScene(Scene):
       sprite_collided = pygame.sprite.spritecollideany(apple,snake.head_group)
       if sprite_collided is not None:
         # process_log.log("Collision detected")
-        apple.relocate()
+        apple.relocate(game_rect)
         snake.grow()
+        self.score_counter += 1
 
       if pygame.sprite.spritecollideany(snake.head,snake.body_segments_group):
         running=False
@@ -146,6 +159,7 @@ class GameScene(Scene):
       # pygame.draw.rect(screen, (0, 0, 255), (250,250,250, 250))
       pygame.display.flip()
       clock.tick(30)
+    database.current_score = self.score_counter
     return self.status_codes['DEFAULT']
 
 
@@ -170,8 +184,9 @@ class TitleScene(Scene):
       self.screen.blit(title_surface,title_rect)
       while running:
         for event in pygame.event.get():
-          if event.type == pygame.QUIT:
-                running = False
+          # did the user hit a key?
+          if event.type == KEYDOWN:
+            running = False
                 
         pygame.display.flip()
       
@@ -247,7 +262,7 @@ class GameOver(Scene):
         title_container.add_child(subtitle_text, id='subtitle')
     
         self.update_text(title_container,'title','Game Over',self.font)
-        self.update_text(title_container,'subtitle','Press Any Key to Exit',self.subtitle_font)
+        self.update_text(title_container,'subtitle',str(database.current_score) + ' Apple(s) Consumed. Press Any Key to Exit.',self.subtitle_font)
         title_surface, title_rect = title_container.render()
         self.screen.blit(title_surface, title_rect)
         pygame.display.flip()
@@ -255,6 +270,9 @@ class GameOver(Scene):
         for event in pygame.event.get():
           if event.type == pygame.QUIT:
                 running = False
+          # did the user hit a key?
+          if event.type == KEYDOWN:
+            running = False
 
       return self.status_codes['DEFAULT']
 

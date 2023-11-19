@@ -1,3 +1,7 @@
+'''
+This module orchestrates the flow of various user interfaces based on interface exit statuses.
+'''
+
 from user_interface import GameScene, TestScene\
 	, TitleScene, Countdown, GameOver
 
@@ -6,9 +10,6 @@ from globals import (
 	SCREEN_WIDTH, SCREEN_HEIGHT, BLACK
 )
 
-'''
-This module orchestrates the flow of various user interfaces based on interface exit statuses.
-'''
 # initialize the screen object
 screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 screen.fill(BLACK)

@@ -330,14 +330,15 @@ class Apple(pygame.sprite.Sprite):
     self.rect.left = 300
     self.rect.top = 650
 
-  def relocate(self):
+  def relocate(self,boundary_rect):
     '''
     TODO:
     
     - Apple should not be placed at 'edge' of screen - should have an upper and lower-bound as buffer
     - Apple should not be placed directly ahead of snake head on relocation
     '''
-    x_coord = SCREEN_DIMENSION * math.floor(random.random() * 100)
-    y_coord = SCREEN_DIMENSION * math.floor(random.random() * 100)
+    border_buffer = 10 # to avoid the apple getting too close to the boundary of the game screen
+    x_coord = boundary_rect.left + (boundary_rect.width - border_buffer) * random.random()
+    y_coord = boundary_rect.top +  (boundary_rect.height - border_buffer) * random.random()
     self.rect.top = y_coord
     self.rect.left= x_coord
