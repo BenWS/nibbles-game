@@ -59,7 +59,9 @@ class Container:
      
   
 
-  def __init__(self,parent, min_height=0,min_width=0, positioning='GROUPED', margin=(0,0,0,0),fill_color=BLACK):
+  def __init__(self,parent, min_height=0,min_width=0, 
+               positioning='GROUPED', margin=(0,0,0,0)
+               ,fill_color=BLACK):
     super(Container,self).__init__()
     # self.parent = None
     self.children = [] 
@@ -83,12 +85,17 @@ class Container:
        self.parent_surface = self.parent.surface
 
     # set surface
-    if margin == (0,0,0,0): # if margin is not set assume 'flex' mode (see note above)
-       sub_surface_height = min_height
-       sub_surface_width = min_width
+    sub_surface_width = 0
+    sub_surface_height = 0
+    if margin == (0,0,0,0)\
+        and min_height == 0 \
+        and min_width == 0: # if margin is not set assume 'flex' mode (see note above)
+       sub_surface_height = self.parent_surface.get_height()
+       sub_surface_width = self.parent_surface.get_width()
     elif not margin==(0,0,0,0):  
         sub_surface_width = self.parent_surface.get_width() - (self.margin_right + self.margin_left)
         sub_surface_height = self.parent_surface.get_height() - (self.margin_top + self.margin_bottom)
+    
     self.surface = pygame.Surface((sub_surface_width, sub_surface_height))
     
     # set rect
@@ -123,10 +130,10 @@ class Container:
       child_surface = pygame.Surface((child.get_width(),child.get_height()))
       pygame.draw.rect(child_surface, (255,0,0), child.rect, width=4)
       self.surface.blit(child_surface, child_rect)
-      self.parent_surface.blit(self.surface,(self.margin_left,self.margin_top))
+      # self.parent_surface.blit(self.surface,(self.margin_left,self.margin_top))
     if isinstance(child,pygame.Surface):
       self.surface.blit(child, child_rect)
-      self.parent_surface.blit(self.surface,(self.margin_left,self.margin_top))
+      # self.parent_surface.blit(self.surface,(self.margin_left,self.margin_top))
 
   @property
   def _grouped_positioning_children(self):
@@ -287,6 +294,9 @@ class Container:
     self._render_grouped()
     self._render_absolute()
 
+    # additional rendering for this element before handing off to display
     pygame.draw.rect(self.surface, (255,0,0), self.rect, width=4)
-    return self.surface, pygame.Rect(self.margin_left,self.margin_top, self.surface.get_width(), self.surface.get_height())
+
+    return self.surface, pygame.Rect(self.margin_left,self.margin_top,self.surface.get_width(),self.surface.get_height())
+    # return self.surface, pygame.Rect(0,0,0,0)
     # return self.surface, (self.margin_left,self.margin_top)
