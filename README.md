@@ -16,9 +16,7 @@ __Starting the Game__
 
 The game may be run via executing `python 'program/main.py'` at the root location of this repository.
 
-# Architectural
-
-Game program architecture:
+# Architecture
 
 ![Architecture Diagram](assets/architecture.png)
 
