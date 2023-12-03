@@ -141,10 +141,10 @@ class Container:
       child_surface = pygame.Surface((child.get_width(),child.get_height()))
       pygame.draw.rect(child_surface, (255,0,0), child.rect, width=4)
       self.surface.blit(child_surface, child_rect)
-      # self.parent_surface.blit(self.surface,(self.margin_left,self.margin_top))
+      self.parent_surface.blit(self.surface,(self.margin_left,self.margin_top))
     if isinstance(child,pygame.Surface):
       self.surface.blit(child, child_rect)
-      # self.parent_surface.blit(self.surface,(self.margin_left,self.margin_top))
+      self.parent_surface.blit(self.surface,(self.margin_left,self.margin_top))
 
   @property
   def _grouped_positioning_children(self):

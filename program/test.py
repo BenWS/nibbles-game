@@ -22,9 +22,9 @@ screen = pygame.display.set_mode([1000,1000])
 '''
 Initialize and build the Container object and its child surfaces
 '''
-text_container = Container(screen, margin=(200,100,200,100))
+text_container = Container(screen, margin=(200,100,200,100),border_enabled=True)
 # text_container_2 = Container(screen, margin=(10,10,10,10))
-blank_container = Container(text_container,min_height=30, min_width=100)
+blank_container = Container(text_container,min_height=30, min_width=100,border_enabled=True)
 # blank_container_2 = Container(screen,min_height=20, min_width=30)
 
 greeting_font = font.Font(None, 60)
