@@ -9,12 +9,13 @@ More available in the [architectural details](#architectural-details) section of
 __Installation__
 
 1. This program was developed using [Python 3.8](https://www.python.org/downloads/release/python-386/). For this reason it is recommended the user has installed at least that version of python in order for the program to run, but this may work fine on earlier versions of Python
-2. It's recommended the user then create a python virtual environmemnt in this root directory via `python -m venv venv`
-3. Once the virtual environment is activated, please run a `pip install -r requirements.txt` for the [`requirements.txt`](requirements.txt) file in here in root directory
+2. Run a `git clone ...` command to copy the contents of repository to your local repository
+3. You may then create a python virtual environmemnt in the root directory of their cloned repository via `python -m venv venv`
+4. Once the virtual environment is activated, please run a `pip install -r requirements.txt` for the [`requirements.txt`](requirements.txt) file
 
 __Starting the Game__
 
-The game may be run via executing `python 'program/main.py'` at the root location of this repository.
+The game may be run via executing `python 'program/main.py'` at the root location of the cloned repository.
 
 # Architecture
 
