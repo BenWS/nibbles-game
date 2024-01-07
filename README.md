@@ -23,26 +23,26 @@ The game may be run via executing `python 'program/main.py'` at the root locatio
 
 ## Details
 
-__`user_interface` Package__
+__`user_interface` Module__
 
-The `user_interface` is responsible for managing the screens each user sees and for loading and unloading graphics elements for each screen. The UI also sets event listeners and overall rules for human interface with the game.
+The `user_interface` module is responsible for managing the screens each user sees and for loading and unloading graphics elements for each screen. The UI also sets event listeners and overall rules for human interface with the game.
 
-__`graphics` Package__
+__`graphics` Module__
 
-The `graphics` package is responsible for constructing and managing movement of individual game entities. The UI sets the event listener but the graphics package determines what the game elements do upon an event.
+The `graphics` module is responsible for constructing and managing movement of individual game entities. The UI sets the event listener but the graphics package determines what the game elements do upon an event.
 
-__`gamerules` Package__
+__`gamerules` Module__
 
-The `gamerules` package determines how the game is scored and is also used to determine whether the game is in a won/lost state. This package should not communicate directly with the main game loop but rather communicate via the `graphics` engine.
+The `gamerules` module determines how the game is scored and is also used to determine whether the game is in a won/lost state. This package should not communicate directly with the main game loop but rather communicate via the `graphics` engine.
 
-__`data_storage` Package__
+__`data_storage` Module__
 
 The `data_storage` is the interface for how the program communicates with the database.
 
-__`logging` Package__
+__`logging` Module__
 
-The `logging` package provides utilities for logging application activity to enable more robust and effective debugging.
+The `logging` module provides utilities for logging application activity to enable more robust and effective debugging.
 
-__`layout` Package__
+__`layout` Module__
 
-The `layout` package provides an HTML div-like interface to managing screen elements via container objects
+The `layout` module provides an HTML div-like interface to managing screen elements via container objects
