@@ -1,5 +1,7 @@
 '''
-Classes in this file pertain to the structure of the user interface; game-specific
+This module provides an HTML div-like interface to managing screen elements via container objects.
+
+Classes in this module pertain to the structure of the user interface; game-specific
 event listeners are not contained here.
 '''
 

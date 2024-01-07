@@ -5,31 +5,17 @@ from layout import Container
 from globals import RED
 font.init()
 
-    # child_union_rect = pygame.Rect.unionall(self.children)
-    # child_surface_rect = self.children[0].get_rect()
-    # if mode == 'center':  
-    #   child_union_rect.center = (self.surface.get_width()//2,self.surface.get_height()//2)
-    # if mode == 'left_middle':  
-    #   child_union_rect.left = 0
-    #   child_union_rect.centery = self.surface.get_height()//2
-    #   child_union_rect.centery = self.surface.get_height()//2
-    # if mode == 'right_middle':  
-    #   child_union_rect.right = self.surface.get_width()
-    #   child_union_rect.centery = self.surface.get_height()//2
-    # self.surface.blit(self.children[0], child_union_rect)
 
 screen = pygame.display.set_mode([1000,1000]) 
 '''
 Initialize and build the Container object and its child surfaces
 '''
 text_container = Container(screen, margin=(200,100,200,100),border_enabled=True)
-# text_container_2 = Container(screen, margin=(10,10,10,10))
 blank_container = Container(text_container,min_height=30, min_width=100,border_enabled=True)
-# blank_container_2 = Container(screen,min_height=20, min_width=30)
 
 greeting_font = font.Font(None, 60)
-greeting_text = greeting_font.render('Oh hi! Taylor Swift', True, (255,0,0))
-greeting_text_2 = greeting_font.render('Oh no! Bye Taylor Swift', True, (255,0,0))
+greeting_text = greeting_font.render('Oh hi!', True, (255,0,0))
+greeting_text_2 = greeting_font.render('Oh no!', True, (255,0,0))
 
 '''
 TODO: 2023_11_16_1

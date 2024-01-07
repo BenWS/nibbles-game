@@ -17,9 +17,9 @@ __Starting the Game__
 
 The game may be run via executing `python 'program/main.py'` at the root location of the cloned repository.
 
-# Architecture
+# Design
 
-![Architecture Diagram](assets/architecture.png)
+![Design Diagram](assets/program_design.jpg)
 
 ## Details
 
@@ -42,3 +42,7 @@ The `data_storage` is the interface for how the program communicates with the da
 __`logging` Package__
 
 The `logging` package provides utilities for logging application activity to enable more robust and effective debugging.
+
+__`layout` Package__
+
+The `layout` package provides an HTML div-like interface to managing screen elements via container objects

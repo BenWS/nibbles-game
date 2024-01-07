@@ -51,8 +51,9 @@ clock.tick(1)
 class Scene:
       '''
       A Scene is a set of event listeners and graphical elements that enable low-level graphical interaction. Think of each
-      'scene' in the game runtime as a *distinct stage* (as in musical theater stage) and *distinct characters* where the
-      'characters' here are graphical elements and event listeners.
+      'scene' in the game runtime as a *distinct stage* (as in 'musical theater stage') and *distinct characters* where the
+      'characters' here are graphical elements and event listeners. The game itself is a full on production of Les Miserables. 
+      You're welcome for the explanation.
       '''
       
       def __init__(self):
